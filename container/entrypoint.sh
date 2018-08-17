@@ -21,5 +21,5 @@ done
 	-tv_port "${TVPORT}" \
 	-clientport "${CLIENTPORT}" \
 	-sport "${SPORT}" \
-	"${SRCDSPARAMS}" \
+	"$(eval "echo ${SRCDSPARAMS}")" \
 	"${@}"
