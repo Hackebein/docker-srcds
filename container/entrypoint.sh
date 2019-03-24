@@ -1,5 +1,19 @@
 #!/bin/bash
 
+_sig () {
+	export SIG=$1
+	SIG_SHORT=$(echo ${SIG} | sed -e 's/^SIG//g')
+	echo "Caught ${SIG} signal!"
+	if [[ -x "./${SIG}_before.sh" ]]; then
+		./ts3server_before_${SIG}.sh
+	fi
+	kill -s ${SIG} ${PID}
+	if [[ -x "./${SIG}_after.sh" ]]; then
+		./ts3server_after_${SIG}.sh
+	fi
+	wait "${PID}"
+}
+
 PORT=${PORT:-27015}
 TVPORT=${TVPORT:-27020}
 CLIENTPORT=${CLIENTPORT:-27005}
@@ -9,8 +23,8 @@ AUTHKEY=${AUTHKEY:-}
 GLST=${GLST:-}
 GLSTAPP=${GLSTAPP:-}
 GLSTMEMO=${GLSTMEMO:-$(hostname)}
-
 APPS=${APPS:-244310}
+
 IFS=',' read -ra APPS <<< "$APPS"
 for a in "${APPS[@]}" ; do
 	steamcmd \
@@ -39,6 +53,15 @@ if [[ -z "${GLST}" && -n "${GLSTAPP}" && -n "${AUTHKEY}" ]]; then
 	fi
 fi
 
+# register traps
+IFS=' ' read -r -a singals <<< $(kill -l | sed -e 's/[0-9]\+)//g' | tr -d '\t\r\n')
+for SIG in "${singals[@]}"; do
+	SIG_SHORT=$(echo ${SIG} | sed -e 's/^SIG//g')
+	echo "Register ${SIG} event"
+	eval "trap '_sig ${SIG}' ${SIG_SHORT}"
+done
+
+# execution
 ./srcds_run \
 	-strictportbind \
 	-port "${PORT}" \
@@ -47,7 +70,11 @@ fi
 	-sport "${SPORT}" \
 	+sv_setsteamaccount "${GLST}" \
 	"$(eval "echo ${SRCDSPARAMS}")" \
-	"${@}"
+	"${@}" &
+
+export PID=$!
+
+wait "${PID}"
 
 if [ -n "${STEAMID}" ]; then
 	curl \
