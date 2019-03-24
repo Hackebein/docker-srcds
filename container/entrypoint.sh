@@ -79,6 +79,7 @@ wait "${PID}"
 if [ -n "${STEAMID}" ]; then
 	curl \
 		-s \
+		-o /dev/null \
 		-d "key=${AUTHKEY}&steamid=${STEAMID}" \
 		'https://api.steampowered.com/IGameServersService/DeleteAccount/v1/'
 fi
