@@ -14,17 +14,6 @@ _sig () {
 	wait "${PID}"
 }
 
-PORT=${PORT:-27015}
-TVPORT=${TVPORT:-27020}
-CLIENTPORT=${CLIENTPORT:-27005}
-SPORT=${SPORT:-26900}
-SRCDSPARAMS=${SRCDSPARAMS:-}
-AUTHKEY=${AUTHKEY:-}
-GLST=${GLST:-}
-GLSTAPP=${GLSTAPP:-}
-GLSTMEMO=${GLSTMEMO:-$(hostname)}
-APPS=${APPS:-244310}
-
 IFS=',' read -ra APPS <<< "$APPS"
 for a in "${APPS[@]}" ; do
 	steamcmd \
@@ -36,6 +25,7 @@ done
 
 if [[ -z "${GLST}" && -n "${GLSTAPP}" && -n "${AUTHKEY}" ]]; then
 	echo "Try to created GLST"
+	GLSTMEMO=${GLSTMEMO:-$(hostname)}
 	IFS=- read STEAMID GLST <<<"$(curl \
 		-s \
 		-d "key=${AUTHKEY}&appid=${GLSTAPP}&memo=${GLSTMEMO}" \
