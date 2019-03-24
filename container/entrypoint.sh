@@ -5,11 +5,11 @@ _sig () {
 	SIG_SHORT=$(echo ${SIG} | sed -e 's/^SIG//g')
 	echo "Caught ${SIG} signal!"
 	if [[ -x "./${SIG}_before.sh" ]]; then
-		./ts3server_before_${SIG}.sh
+		./${SIG}_before.sh
 	fi
 	kill -s ${SIG} ${PID}
 	if [[ -x "./${SIG}_after.sh" ]]; then
-		./ts3server_after_${SIG}.sh
+		./${SIG}_before.sh
 	fi
 	wait "${PID}"
 }
