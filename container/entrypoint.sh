@@ -5,7 +5,7 @@ TVPORT=${TVPORT:-27020}
 CLIENTPORT=${CLIENTPORT:-27005}
 SPORT=${SPORT:-26900}
 SRCDSPARAMS=${SRCDSPARAMS:-}
-APIKEY=${APIKEY:-}
+AUTHKEY=${AUTHKEY:-}
 GLST=${GLST:-}
 GLSTAPP=${GLSTAPP:-}
 GLSTMEMO=${GLSTMEMO:-$(hostname)}
@@ -20,10 +20,11 @@ for a in "${APPS[@]}" ; do
 		+quit
 done
 
-if [[ -z "${GLST}" && -n "${GLSTAPP}" && -n "${APIKEY}" ]]; then
+if [[ -z "${GLST}" && -n "${GLSTAPP}" && -n "${AUTHKEY}" ]]; then
+	echo "Try to created GLST"
 	IFS=- read STEAMID GLST <<<"$(curl \
 		-s \
-		-d "key=${APIKEY}&appid=${GLSTAPP}&memo=${GLSTMEMO}" \
+		-d "key=${AUTHKEY}&appid=${GLSTAPP}&memo=${GLSTMEMO}" \
 		'https://api.steampowered.com/IGameServersService/CreateAccount/v1/' \
 		| jq \
 			-e \
@@ -32,7 +33,7 @@ if [[ -z "${GLST}" && -n "${GLSTAPP}" && -n "${APIKEY}" ]]; then
 	if [[ "${STEAMID}" =~ ^[0-9]+$ && "${GLST}" =~ ^[0-9A-F]+$ ]]; then
 		echo "Created GLST: ${GLST} (${GLSTMEMO}) for APPID ${GLSTAPP}"
 	else
-		echo "GLST can't be created! Check your APIKEY, GLSTAPP and account requirements"
+		echo "GLST can't be created! Check your AUTHKEY, GLSTAPP and account requirements"
 		STEAMID=
 		GLST=
 	fi
@@ -51,6 +52,6 @@ fi
 if [ -n "${STEAMID}" ]; then
 	curl \
 		-s \
-		-d "key=${APIKEY}&steamid=${STEAMID}" \
+		-d "key=${AUTHKEY}&steamid=${STEAMID}" \
 		'https://api.steampowered.com/IGameServersService/DeleteAccount/v1/'
 fi
