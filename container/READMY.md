@@ -52,3 +52,7 @@ SPORT:
 
 CUSTOMPARAMETERS: additional parameters
 (`Default: `)
+
+## More Options
+
+You can found more configuration options on the parent image page [hackebein/steamcmd](https://hub.docker.com/r/hackebein/steamcmd)
