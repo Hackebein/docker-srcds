@@ -36,6 +36,18 @@ docker run \
 
 Get your [GLST](http://steamcommunity.com/dev/managegameservers) (`APPID: 244310`)
 
+## Signals
+
+Signals are catched and call a script `before` and `after` send the signal to the server executable.
+
+```
+docker run \
+    --expose 27015 \
+    -v ./SIGINT_before.sh:/opt/steam/SIGINT_before.sh \
+    -v ./SIGTERM_after.sh:/opt/steam/SIGTERM_after.sh \
+    hackebein/srcds
+```
+
 ## Additional Environment
 
 PORT: Connection Port
