@@ -26,14 +26,14 @@ ENV BASEDIR=$BASEDIR \
 	CUSTOMPARAMETERS="" \
 	#
 	# Start parameters
-    SRCDSPARAMS="\
+	SRCDSPARAMS="\
 		\${CUSTOMPARAMETERS} \
     "
 
 RUN apt update \
  && apt install -y \
 		curl \
-        jq \
+		jq \
  && apt clean
 COPY container/* $BASEDIR/
 
