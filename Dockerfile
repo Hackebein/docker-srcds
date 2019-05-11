@@ -3,10 +3,11 @@ FROM hackebein/steamcmd
 ARG BASEDIR=/opt/steam
 ONBUILD ARG BASEDIR=$BASEDIR
 ENV BASEDIR=$BASEDIR \
-    PORT="27015" \
-    TVPORT="27020" \
-    CLIENTPORT="27005" \
-    SPORT="26900" \
+	SIGNALS_ENABLE="true" \
+	PORT="27015" \
+	TVPORT="27020" \
+	CLIENTPORT="27005" \
+	SPORT="26900" \
 	# App
 	APPS="244310" \
 	#
@@ -28,7 +29,7 @@ ENV BASEDIR=$BASEDIR \
 	# Start parameters
 	SRCDSPARAMS="\
 		\${CUSTOMPARAMETERS} \
-    "
+	"
 
 RUN apt update \
  && apt install -y \

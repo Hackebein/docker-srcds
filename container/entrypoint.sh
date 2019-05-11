@@ -43,16 +43,13 @@ if [[ -z "${GLST}" && -n "${GLSTAPP}" && -n "${AUTHKEY}" ]]; then
 	fi
 fi
 
-if [[ "${SIGNALS_ENABLE:-true}" == "true" ]]
-	# register traps
+if [[ "${SIGNALS_ENABLE}" == "true" ]]; then
 	IFS=' ' read -r -a singals <<< $(kill -l | sed -e 's/[0-9]\+)//g' | tr -d '\t\r\n')
 	for SIG in "${singals[@]}"; do
 		SIG_SHORT=$(echo ${SIG} | sed -e 's/^SIG//g')
 		echo "Register ${SIG} event"
 		eval "trap '_sig ${SIG}' ${SIG_SHORT}"
 	done
-
-	# execution
 	./srcds_run \
 		-strictportbind \
 		-port "${PORT}" \
@@ -67,7 +64,6 @@ if [[ "${SIGNALS_ENABLE:-true}" == "true" ]]
 
 	wait "${PID}"
 else
-	# execution
 	./srcds_run \
 		-strictportbind \
 		-port "${PORT}" \
