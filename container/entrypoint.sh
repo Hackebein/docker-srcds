@@ -43,28 +43,41 @@ if [[ -z "${GLST}" && -n "${GLSTAPP}" && -n "${AUTHKEY}" ]]; then
 	fi
 fi
 
-# register traps
-IFS=' ' read -r -a singals <<< $(kill -l | sed -e 's/[0-9]\+)//g' | tr -d '\t\r\n')
-for SIG in "${singals[@]}"; do
-	SIG_SHORT=$(echo ${SIG} | sed -e 's/^SIG//g')
-	echo "Register ${SIG} event"
-	eval "trap '_sig ${SIG}' ${SIG_SHORT}"
-done
+if [[ "${SIGNALS_ENABLE:-true}" == "true" ]]
+	# register traps
+	IFS=' ' read -r -a singals <<< $(kill -l | sed -e 's/[0-9]\+)//g' | tr -d '\t\r\n')
+	for SIG in "${singals[@]}"; do
+		SIG_SHORT=$(echo ${SIG} | sed -e 's/^SIG//g')
+		echo "Register ${SIG} event"
+		eval "trap '_sig ${SIG}' ${SIG_SHORT}"
+	done
 
-# execution
-./srcds_run \
-	-strictportbind \
-	-port "${PORT}" \
-	-tv_port "${TVPORT}" \
-	-clientport "${CLIENTPORT}" \
-	-sport "${SPORT}" \
-	+sv_setsteamaccount "${GLST}" \
-	"$(eval "echo ${SRCDSPARAMS}")" \
-	"${@}" &
+	# execution
+	./srcds_run \
+		-strictportbind \
+		-port "${PORT}" \
+		-tv_port "${TVPORT}" \
+		-clientport "${CLIENTPORT}" \
+		-sport "${SPORT}" \
+		+sv_setsteamaccount "${GLST}" \
+		"$(eval "echo ${SRCDSPARAMS}")" \
+		"${@}" &
 
-export PID=$!
+	export PID=$!
 
-wait "${PID}"
+	wait "${PID}"
+else
+	# execution
+	./srcds_run \
+		-strictportbind \
+		-port "${PORT}" \
+		-tv_port "${TVPORT}" \
+		-clientport "${CLIENTPORT}" \
+		-sport "${SPORT}" \
+		+sv_setsteamaccount "${GLST}" \
+		"$(eval "echo ${SRCDSPARAMS}")" \
+		"${@}"
+fi
 
 if [ -n "${STEAMID}" ]; then
 	curl \
