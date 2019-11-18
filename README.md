@@ -62,6 +62,9 @@ TVPORT:
 SPORT:
 (`Default: 26900`)
 
+GLSTMEMO: automatic GLST registration memo
+(`Default: <container-hostname>`)
+
 CUSTOMPARAMETERS: additional parameters
 (`Default: `)
 
