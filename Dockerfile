@@ -1,5 +1,4 @@
 FROM hackebein/steamcmd
-
 ARG BASEDIR=/opt/steam
 ONBUILD ARG BASEDIR=$BASEDIR
 ENV BASEDIR=$BASEDIR \
@@ -18,7 +17,7 @@ ENV BASEDIR=$BASEDIR \
 	# Public access
 	# automatic via API
 	GLSTAPP="244310" \
-	# manual
+	#
 	# APPID: 244310
 	# http://steamcommunity.com/dev/managegameservers
 	GLST="" \
@@ -30,16 +29,16 @@ ENV BASEDIR=$BASEDIR \
 	SRCDSPARAMS="\
 		\${CUSTOMPARAMETERS} \
 	"
-
+COPY entrypoint.sh /
 RUN apt update \
  && apt install -y \
-		curl \
-		jq \
- && apt clean
-COPY container/* $BASEDIR/
-
+        curl \
+        jq \
+        wget \
+ && apt clean \
+ && rm -rf \
+        /var/lib/apt/lists/* \
+ && chmod +x /entrypoint.sh
 EXPOSE 27015/tcp 27015/udp 27020/udp
-
 WORKDIR $BASEDIR
-
-ENTRYPOINT ["bash", "entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
