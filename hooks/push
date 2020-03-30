@@ -1,0 +1,21 @@
+#!/bin/bash
+set -eu
+
+echo "[***] push is running"
+
+cd "$(dirname "$(readlink -f "$0")")"
+cd ..
+. "hooks/env"
+
+for DOCKER_TAG in $(docker images --format '{{.Tag}}' "${DOCKER_REPO_RELATIVE}:*"); do
+    IMAGE_NAME_RELATIVE=${DOCKER_REPO_RELATIVE}:${DOCKER_TAG}
+    IMAGE_NAME=${DOCKER_REGISTRY}/${IMAGE_NAME_RELATIVE}
+    echo "[***] Compare ${IMAGE_NAME_RELATIVE} images ..."
+    IMAGE_DIFFS=$(container-diff diff -n daemon://${IMAGE_NAME_RELATIVE} remote://${IMAGE_NAME_RELATIVE} --type=file --json | jq '.')
+    IMAGE_DIFFS_COUNT=$(echo "${IMAGE_DIFFS}" | jq '[] + .[0].Diff.Adds + .[0].Diff.Dels + .[0].Diff.Mods | map(select(.Name | test("^(?:(?!\/var\/(?:log|cache)\/).)*$"))) | length')
+    if [[ "${IMAGE_DIFFS_COUNT}" != "0" ]]; then
+        echo "[***] Found diff: $(echo "${IMAGE_DIFFS}" | jq -cM '[] + .[0].Diff.Adds + .[0].Diff.Dels + .[0].Diff.Mods | map(select(.Name | test("^(?:(?!\/var\/(?:log|cache)\/).)*$")))')"
+        echo "[***] Pushing ${IMAGE_NAME_RELATIVE} ..."
+        docker push "${IMAGE_NAME_RELATIVE}"
+    fi
+done

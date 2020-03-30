@@ -1,0 +1,5 @@
+#!/bin/bash
+set -eu
+
+export DOCKER_REGISTRY=$(echo "${DOCKER_REPO}" | cut -d'/' -f1)
+export DOCKER_REPO_RELATIVE=$(echo "${DOCKER_REPO}" | cut -d'/' -f2-)

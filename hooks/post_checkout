@@ -1,0 +1,16 @@
+#!/bin/bash
+set -eu
+
+echo "[***] post_checkout is running"
+
+cd "$(dirname "$(readlink -f "$0")")"
+cd ..
+. "hooks/env"
+
+echo "[***] Install jq"
+apt-get update
+apt-get install -y jq
+
+echo "[***] Install container-diff"
+curl -sL https://storage.googleapis.com/container-diff/latest/container-diff-linux-amd64 -o /usr/local/bin/container-diff
+chmod +x /usr/local/bin/container-diff
