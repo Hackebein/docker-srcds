@@ -39,5 +39,5 @@ RUN apt update \
         /var/lib/apt/lists/* \
  && chmod +x /entrypoint.sh
 EXPOSE 27015/tcp 27015/udp 27020/udp
-WORKDIR $BASEDIR
+WORKDIR /opt/steam
 ENTRYPOINT ["/entrypoint.sh"]
