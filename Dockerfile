@@ -1,8 +1,5 @@
 FROM hackebein/steamcmd
-ARG BASEDIR=/opt/steam
-ONBUILD ARG BASEDIR=$BASEDIR
-ENV BASEDIR=$BASEDIR \
-	SIGNALS_ENABLE="true" \
+ENV SIGNALS_ENABLE="false" \
 	PORT="27015" \
 	TVPORT="27020" \
 	CLIENTPORT="27005" \
@@ -21,6 +18,9 @@ ENV BASEDIR=$BASEDIR \
 	# APPID: 244310
 	# http://steamcommunity.com/dev/managegameservers
 	GLST="" \
+	#
+	# Login credentials
+	LOGIN="anonymous" \
 	#
 	# Other
 	CUSTOMPARAMETERS="" \

@@ -14,15 +14,43 @@ _sig () {
 	wait "${PID}"
 }
 
+# install APPS
 IFS=',' read -ra APPS <<< "$APPS"
+APP_4020=false
 for a in "${APPS[@]}" ; do
-	steamcmd \
-		+login anonymous \
-		+force_install_dir "${BASEDIR}" \
-		+app_update "${a}" -validate -language en \
-		+quit
+	if [[ "${a}" =~ ^4020(\s.*)?$ ]]; then
+		APP_4020=${a}
+	else
+		steamcmd \
+			+login ${LOGIN} \
+			+force_install_dir "$(pwd)" \
+			+app_update ${a} -validate -language en \
+			+quit
+	fi
 done
+if [[ "${APP_4020}" != "false" ]]; then
+	steamcmd \
+		+login ${LOGIN} \
+		+force_install_dir "$(pwd)" \
+		+app_update ${APP_4020} -validate -language en \
+		+quit
+	find $(pwd)/* -maxdepth 0 -type d -not -name 'bin' -and -not -name 'platform' -and -not -name 'sourceengine' -and -not -name 'steamapps' -and -not -name 'garrysmod' \
+		| sed -E -n -e 's/^(.*+\/)(.*)$/    "\2" "\1\2"\r/p' \
+		| ( \
+			echo -ne '"mountcfg"\r\n{\r\n'; \
+			cat; \
+			echo -ne '}\r\n'; \
+		) > garrysmod/cfg/mount.cfg
+	find $(pwd)/* -maxdepth 0 -type d -not -name 'bin' -and -not -name 'platform' -and -not -name 'sourceengine' -and -not -name 'steamapps' -and -not -name 'garrysmod' \
+		| sed -E -n -e 's/^(.*+\/)(.*)$/    "\2" "1"\r/p' \
+		| ( \
+			echo -ne '"gamedepotsystem"\r\n{\r\n'; \
+			cat; \
+			echo -ne '}\r\n'; \
+		) > garrysmod/cfg/mountdepots.txt
+fi
 
+# GLST via API
 if [[ -z "${GLST}" && -n "${GLSTAPP}" && -n "${AUTHKEY}" ]]; then
 	echo "Try to created GLST"
 	GLSTMEMO=${GLSTMEMO:-$(hostname)}

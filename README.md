@@ -1,5 +1,3 @@
-This image is not tested!
-
 # What is Source Dedicated Server?
 
 Valve call this Server [Source SDK Base 2013 Dedicated Server](https://steamdb.info/app/244310/). This Server builds the base for all source engine based games with dedicated server support.
@@ -43,12 +41,17 @@ Signals are catched and call a script `before` and `after` send the signal to th
 ```
 docker run \
     --expose 27015 \
+    -e "SIGNALS_ENABLE=true"
     -v ./SIGINT_before.sh:/opt/steam/SIGINT_before.sh \
     -v ./SIGTERM_after.sh:/opt/steam/SIGTERM_after.sh \
     hackebein/srcds
 ```
 
 ## Additional Environment
+
+LOGIN: Login information
+(`Default: anonymous`)
+Format: `<username> <password>`
 
 PORT: Connection Port
 (`Default: 27015`)
@@ -64,6 +67,13 @@ SPORT:
 
 GLSTMEMO: automatic GLST registration memo
 (`Default: <container-hostname>`)
+
+SIGNALS_ENABLE: enable process signal handling
+(`Default: false`)
+
+APPS: AppIDs
+(`Default: 244310`)
+Format: `<app_id> [-beta <betaname>] [-betapassword <password>][,...]`
 
 CUSTOMPARAMETERS: additional parameters
 (`Default: `)
