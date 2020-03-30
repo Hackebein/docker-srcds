@@ -34,7 +34,6 @@ RUN apt update \
  && apt install -y \
         curl \
         jq \
-        wget \
  && apt clean \
  && rm -rf \
         /var/lib/apt/lists/* \
