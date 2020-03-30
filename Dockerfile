@@ -1,4 +1,4 @@
-FROM hackebein/steamcmd:19.10
+FROM hackebein/steamcmd
 ENV SIGNALS_ENABLE="false" \
 	PORT="27015" \
 	TVPORT="27020" \
