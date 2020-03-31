@@ -34,6 +34,7 @@ RUN apt update \
  && apt install -y \
         curl \
         jq \
+        lib32stdc++6 \
  && apt clean \
  && rm -rf \
         /var/lib/apt/lists/* \
