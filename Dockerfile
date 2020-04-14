@@ -14,13 +14,21 @@ ENV SIGNALS_ENABLE="false" \
 	# Public access
 	# automatic via API
 	GLSTAPP="244310" \
-	#
+	# manual
 	# APPID: 244310
 	# http://steamcommunity.com/dev/managegameservers
 	GLST="" \
 	#
 	# Login credentials
 	LOGIN="anonymous" \
+	#
+	# MetaMod
+	METAMOD="" \
+	#
+	# SourceMod
+	SOURCEMOD="" \
+	SOURCEMOD_PLUGINS="admin-flatfile,adminhelp,adminmenu,antiflood,basebans,basechat,basecomm,basecommands,basetriggers,basevotes,clientprefs,funcommands,funvotes,nextmap,playercommands,reservedslots,sounds" \
+	AUTOUPDATE="false" \
 	#
 	# Other
 	CUSTOMPARAMETERS="" \
@@ -30,6 +38,7 @@ ENV SIGNALS_ENABLE="false" \
 		\${CUSTOMPARAMETERS} \
 	"
 COPY entrypoint.sh /
+COPY misc /opt/misc
 RUN apt update \
  && apt install -y \
         curl \
@@ -41,4 +50,5 @@ RUN apt update \
  && chmod +x /entrypoint.sh
 EXPOSE 27015/tcp 27015/udp 27020/udp
 WORKDIR /opt/steam
+VOLUME /opt/steam
 ENTRYPOINT ["/entrypoint.sh"]

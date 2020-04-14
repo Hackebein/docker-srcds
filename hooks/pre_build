@@ -1,0 +1,12 @@
+#!/bin/bash
+set -eu
+
+echo "[***] pre_build is running"
+
+cd "$(dirname "$(readlink -f "$0")")"
+cd ..
+. "hooks/env"
+
+echo "[***] Generate json file of all alliedmods"
+touch "$(pwd)/alliedmods.json"
+docker run --rm -v "$(pwd)/misc/alliedmods.json:/usr/src/app/releases.json" hackebein/alliedmods-json "mmsource|sourcemod|SteamWorks", "linux"
