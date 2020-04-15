@@ -28,6 +28,11 @@ ENV SIGNALS_ENABLE="false" \
 	# SourceMod
 	SOURCEMOD="" \
 	SOURCEMOD_PLUGINS="admin-flatfile,adminhelp,adminmenu,antiflood,basebans,basechat,basecomm,basecommands,basetriggers,basevotes,clientprefs,funcommands,funvotes,nextmap,playercommands,reservedslots,sounds" \
+	#
+	# SteamWorks
+	STEAMWORKS="latest" \
+	#
+	# Update
 	AUTOUPDATE="false" \
 	#
 	# Other

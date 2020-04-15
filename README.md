@@ -89,6 +89,9 @@ Examples: latest, 1.11, 1.10.0, 1.10.0.6482
 SOURCEMOD_PLUGINS: plugins to enable by default
 (`Default: admin-flatfile,adminhelp,adminmenu,antiflood,basebans,basechat,basecomm,basecommands,basetriggers,basevotes,clientprefs,funcommands,funvotes,nextmap,playercommands,reservedslots,sounds`)
 
+STEAMWORKS: version of SteamWorks to install (requires SourceMod)
+(`Default: latest`)
+
 AUTOUPDATE: enables autorestart/autoupdate (requires SourceMod)
 (`Default: false`)
 

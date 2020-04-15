@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 _sig () {
 	export SIG=$1
@@ -79,17 +80,37 @@ if [[ -n "${METAMOD}" && -n "${SOURCEMOD}" ]]; then
 		tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${SOURCEMOD_FILE}"
 		rm "/tmp/${SOURCEMOD_FILE}"
 		mv "$(pwd)/${GAME}/addons/sourcemod/plugins/"*".smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
-		if [[ "${AUTOUPDATE}" != "false" ]]; then
-			cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
-		fi
+		cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
 		IFS=',' read -ra SOURCEMOD_PLUGINS <<< "${SOURCEMOD_PLUGINS}"
 		for a in "${SOURCEMOD_PLUGINS[@]}" ; do
 			mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/${a}.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
 		done
-		if [[ "${AUTOUPDATE}" != "false" ]]; then
-			mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
-		fi
 	fi
+else
+	SOURCEMOD=
+fi
+
+if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" ]]; then
+	STEAMWORKS_URL=$(jq -M -e -r '.["SteamWorks-" + env.STEAMWORKS + "-linux"]' /opt/misc/alliedmods.json)
+	if [[ "${STEAMWORKS}" == "null" ]]; then
+		echo "Can't found SteamWorks version"
+		STEAMWORKS=
+		STEAMWORKS_URL=
+	else
+		echo "Found SteamWorks ${STEAMWORKS} (${STEAMWORKS_URL})"
+		STEAMWORKS_FILE=$(echo "${STEAMWORKS_URL}" | rev | cut -d'/' -f1 | rev)
+		curl -s "${STEAMWORKS_URL}" -o "/tmp/${STEAMWORKS_FILE}"
+		tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${STEAMWORKS_FILE}"
+		rm "/tmp/${STEAMWORKS_FILE}"
+	fi
+else
+	STEAMWORKS=
+fi
+
+if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" && "${AUTOUPDATE}" != "false" ]]; then
+	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
+else
+	AUTOUPDATE=false
 fi
 
 # GLST via API
