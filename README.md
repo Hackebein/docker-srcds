@@ -47,6 +47,32 @@ docker run -it \
     hackebein/srcds
 ```
 
+## Overlay folder
+
+Copy files over before start server
+
+```
+docker run -it \
+    --expose 27015 \
+    -v ./overlay:/opt/overlay \
+    hackebein/srcds
+```
+
+## SourceMod Plugins
+
+```
+docker run -it \
+    --expose 27015 \
+    -e "METAMOD=latest" \
+    -e "SOURCEMOD=latest" \
+    -e "AUTOUPDATE=true" \
+    -e "SOURCEMOD_PLUGINS_INSTALL=https://ci.splewis.net/job/csgo-pug-setup/lastSuccessfulBuild/artifact/builds/pugsetup/pugsetup-495.zip,/opt/misc/myplugin.smx" \
+    -e "SOURCEMOD_PLUGINS_ENABLE=admin-flatfile,adminhelp,adminmenu,antiflood,basebans,basechat,basecomm,basecommands,basetriggers,basevotes,clientprefs,funcommands,funvotes,myplugin,nextmap,playercommands,pugsetup,pugsetup_teamnames,reservedslots,sounds" \
+    -v ./myplugin.smx:/opt/misc/myplugin.smx \
+    -v ./overlay:/opt/overlay \
+    hackebein/srcds
+```
+
 ## Additional Environment
 
 LOGIN: Login information
