@@ -131,7 +131,9 @@ if [[ -n "${SOURCEMOD}" ]]; then
 		fi
 		rm "/tmp/${PLUGIN_FILE}"
 	done
+	set +e
 	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/"*".smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
+	set -e
 	cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
 	IFS=',' read -ra SOURCEMOD_PLUGINS_ENABLE <<< "${SOURCEMOD_PLUGINS_ENABLE}"
 	for a in "${SOURCEMOD_PLUGINS_ENABLE[@]}" ; do
