@@ -79,15 +79,60 @@ if [[ -n "${METAMOD}" && -n "${SOURCEMOD}" ]]; then
 		curl -s "${SOURCEMOD_URL}" -o "/tmp/${SOURCEMOD_FILE}"
 		tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${SOURCEMOD_FILE}"
 		rm "/tmp/${SOURCEMOD_FILE}"
-		mv "$(pwd)/${GAME}/addons/sourcemod/plugins/"*".smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
-		cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
-		IFS=',' read -ra SOURCEMOD_PLUGINS <<< "${SOURCEMOD_PLUGINS}"
-		for a in "${SOURCEMOD_PLUGINS[@]}" ; do
-			mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/${a}.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
-		done
 	fi
 else
 	SOURCEMOD=
+fi
+
+if [[ -n "${SOURCEMOD}" ]]; then
+	IFS=',' read -ra SOURCEMOD_PLUGINS_INSTALL <<< "${SOURCEMOD_PLUGINS_INSTALL}"
+	for PLUGIN_URL in "${SOURCEMOD_PLUGINS_INSTALL[@]}" ; do
+		echo "Installing ${PLUGIN_URL}"
+		PLUGIN_FILE=$(echo "${PLUGIN_URL}" | rev | cut -d'/' -f1 | rev)
+		if [[ "${PLUGIN_URL}" ~= "^https?://" ]]; then
+			curl -s "${PLUGIN_URL}" -o "/tmp/${PLUGIN_FILE}"
+		elif [[ -f "${PLUGIN_URL}" ]]; then # TODO: or directory
+			cp -a "${PLUGIN_URL}" "/tmp"
+		else
+			echo "Error: Unknown file source."
+			exit 1
+		fi
+		# TODO: detect single file
+		if [[ "${PLUGIN_FILE}" ~= "\.smx$"]]
+			cp -a "/tmp/${PLUGIN_FILE}" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
+		elif [[ "$(set +e; tar -tzf "/tmp/${PLUGIN_FILE}" 2>/dev/null >/dev/null; echo $?; set -e)" == "0" ]]; then
+			if [[ "$(tar -tzf "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
+				tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${PLUGIN_FILE}"
+			elif [[ "$(tar -tzf "/tmp/${PLUGIN_FILE}" | grep "^${GAME}/$" | wc -l)" == "1" ]]; then
+				tar --no-same-owner --keep-newer-files -xf "/tmp/${PLUGIN_FILE}"
+			else
+				rm "/tmp/${PLUGIN_FILE}"
+				echo "Error: Unknown archiv structure."
+				exit 1
+			fi
+		elif [[ "$(set +e; unzip -Z1 "/tmp/${PLUGIN_FILE}" 2>/dev/null >/dev/null; echo $?; set -e)" == "0" ]]; then
+			elif [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
+				unzip -u -d "${GAME}" "/tmp/${PLUGIN_FILE}"
+			elif [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep "^${GAME}/$" | wc -l)" == "1" ]]; then
+				unzip -u "/tmp/${PLUGIN_FILE}"
+			else
+				rm "/tmp/${PLUGIN_FILE}"
+				echo "Error: Unknown archiv structure."
+				exit 1
+			fi
+		else
+			rm "/tmp/${PLUGIN_FILE}"
+			echo "Error: Unknown file format."
+			exit 1
+		fi
+		rm "/tmp/${PLUGIN_FILE}"
+	done
+	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/"*".smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
+	cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
+	IFS=',' read -ra SOURCEMOD_PLUGINS_ENABLE <<< "${SOURCEMOD_PLUGINS_ENABLE}"
+	for a in "${SOURCEMOD_PLUGINS_ENABLE[@]}" ; do
+		mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/${a}.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
+	done
 fi
 
 if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" ]]; then

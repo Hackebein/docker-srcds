@@ -86,7 +86,10 @@ SOURCEMOD: version of SourceMod to install (requires MetaMod)
 Examples: latest, 1.11, 1.10.0, 1.10.0.6482
 (`Default: `)
 
-SOURCEMOD_PLUGINS: plugins to enable by default
+SOURCEMOD_PLUGINS_INSTALL: plugins to install from local path or URL
+(`Default: `)
+
+SOURCEMOD_PLUGINS_ENABLE: plugins to enable
 (`Default: admin-flatfile,adminhelp,adminmenu,antiflood,basebans,basechat,basecomm,basecommands,basetriggers,basevotes,clientprefs,funcommands,funvotes,nextmap,playercommands,reservedslots,sounds`)
 
 STEAMWORKS: version of SteamWorks to install (requires SourceMod)

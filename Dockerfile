@@ -27,7 +27,8 @@ ENV SIGNALS_ENABLE="false" \
 	#
 	# SourceMod
 	SOURCEMOD="" \
-	SOURCEMOD_PLUGINS="admin-flatfile,adminhelp,adminmenu,antiflood,basebans,basechat,basecomm,basecommands,basetriggers,basevotes,clientprefs,funcommands,funvotes,nextmap,playercommands,reservedslots,sounds" \
+	SOURCEMOD_PLUGINS_INSTALL="" \
+	SOURCEMOD_PLUGINS_ENABLE="admin-flatfile,adminhelp,adminmenu,antiflood,basebans,basechat,basecomm,basecommands,basetriggers,basevotes,clientprefs,funcommands,funvotes,nextmap,playercommands,reservedslots,sounds" \
 	#
 	# SteamWorks
 	STEAMWORKS="latest" \
@@ -49,6 +50,7 @@ RUN apt update \
         curl \
         jq \
         lib32stdc++6 \
+        unzip \
  && apt clean \
  && rm -rf \
         /var/lib/apt/lists/* \
