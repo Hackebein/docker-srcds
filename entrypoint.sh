@@ -86,19 +86,19 @@ fi
 
 if [[ -n "${SOURCEMOD}" ]]; then
 	IFS=',' read -ra SOURCEMOD_PLUGINS_INSTALL <<< "${SOURCEMOD_PLUGINS_INSTALL}"
-	for PLUGIN_URL in "${SOURCEMOD_PLUGINS_INSTALL[@]}" ; do
+	for PLUGIN_URL in "${SOURCEMOD_PLUGINS_INSTALL[@]}"; do
 		echo "Installing ${PLUGIN_URL}"
 		PLUGIN_FILE=$(echo "${PLUGIN_URL}" | rev | cut -d'/' -f1 | rev)
-		if [[ "${PLUGIN_URL}" ~= "^https?://" ]]; then
+		if [[ "${PLUGIN_URL}" =~ ^https?:\/\/ ]]; then
 			curl -s "${PLUGIN_URL}" -o "/tmp/${PLUGIN_FILE}"
-		elif [[ -f "${PLUGIN_URL}" ]]; then # TODO: or directory
+		elif [[ -f "${PLUGIN_URL}" ]]; then
 			cp -a "${PLUGIN_URL}" "/tmp"
 		else
 			echo "Error: Unknown file source."
 			exit 1
 		fi
 		# TODO: detect single file
-		if [[ "${PLUGIN_FILE}" ~= "\.smx$"]]
+		if [[ "${PLUGIN_FILE}" =~ \.smx$ ]]; then
 			cp -a "/tmp/${PLUGIN_FILE}" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
 		elif [[ "$(set +e; tar -tzf "/tmp/${PLUGIN_FILE}" 2>/dev/null >/dev/null; echo $?; set -e)" == "0" ]]; then
 			if [[ "$(tar -tzf "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
