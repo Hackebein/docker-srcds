@@ -9,4 +9,4 @@ cd ..
 
 echo "[***] Generate json file of all alliedmods"
 touch "$(pwd)/misc/alliedmods.json"
-docker run --rm -v "$(pwd)/misc/alliedmods.json:/usr/src/app/releases.json" hackebein/alliedmods-json "mmsource|sourcemod|SteamWorks", "linux"
+docker run --rm -v "$(pwd)/misc/alliedmods.json:/usr/src/app/releases.json" hackebein/alliedmods-json "mmsource|sourcemod|SteamWorks" "linux"
