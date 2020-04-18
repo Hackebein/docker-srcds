@@ -84,6 +84,23 @@ else
 	SOURCEMOD=
 fi
 
+if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" ]]; then
+	STEAMWORKS_URL=$(set +e; jq -M -e -r '.["SteamWorks-" + env.STEAMWORKS + "-linux"]' /opt/misc/alliedmods.json; set -e)
+	if [[ "${STEAMWORKS}" == "null" ]]; then
+		echo "Can't found SteamWorks version"
+		STEAMWORKS=
+		STEAMWORKS_URL=
+	else
+		echo "Found SteamWorks ${STEAMWORKS} (${STEAMWORKS_URL})"
+		STEAMWORKS_FILE=$(echo "${STEAMWORKS_URL}" | rev | cut -d'/' -f1 | rev)
+		curl -s "${STEAMWORKS_URL}" -o "/tmp/${STEAMWORKS_FILE}"
+		tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${STEAMWORKS_FILE}"
+		rm "/tmp/${STEAMWORKS_FILE}"
+	fi
+else
+	STEAMWORKS=
+fi
+
 if [[ -n "${SOURCEMOD}" ]]; then
 	IFS=',' read -ra SOURCEMOD_PLUGINS_INSTALL <<< "${SOURCEMOD_PLUGINS_INSTALL}"
 	for PLUGIN_URL in "${SOURCEMOD_PLUGINS_INSTALL[@]}"; do
@@ -127,6 +144,13 @@ if [[ -n "${SOURCEMOD}" ]]; then
 		fi
 		rm "/tmp/${PLUGIN_FILE}"
 	done
+fi
+
+if [[ -d "/opt/overlay" ]]; then
+	cp -a "/opt/overlay/." "$(pwd)"
+fi
+
+if [[ -n "${SOURCEMOD}" ]]; then
 	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/"*".smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
 	cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
 	IFS=',' read -ra SOURCEMOD_PLUGINS_ENABLE <<< "${SOURCEMOD_PLUGINS_ENABLE}"
@@ -141,31 +165,10 @@ if [[ -n "${SOURCEMOD}" ]]; then
 	done
 fi
 
-if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" ]]; then
-	STEAMWORKS_URL=$(set +e; jq -M -e -r '.["SteamWorks-" + env.STEAMWORKS + "-linux"]' /opt/misc/alliedmods.json; set -e)
-	if [[ "${STEAMWORKS}" == "null" ]]; then
-		echo "Can't found SteamWorks version"
-		STEAMWORKS=
-		STEAMWORKS_URL=
-	else
-		echo "Found SteamWorks ${STEAMWORKS} (${STEAMWORKS_URL})"
-		STEAMWORKS_FILE=$(echo "${STEAMWORKS_URL}" | rev | cut -d'/' -f1 | rev)
-		curl -s "${STEAMWORKS_URL}" -o "/tmp/${STEAMWORKS_FILE}"
-		tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${STEAMWORKS_FILE}"
-		rm "/tmp/${STEAMWORKS_FILE}"
-	fi
-else
-	STEAMWORKS=
-fi
-
 if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" && "${AUTOUPDATE}" != "false" ]]; then
 	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
 else
 	AUTOUPDATE=false
-fi
-
-if [[ -d "/opt/overlay" ]]; then
-	cp -a "/opt/overlay/." "$(pwd)"
 fi
 
 # GLST via API
