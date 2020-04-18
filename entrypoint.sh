@@ -111,7 +111,7 @@ if [[ -n "${SOURCEMOD}" ]]; then
 				exit 1
 			fi
 		elif [[ "$(set +e; unzip -Z1 "/tmp/${PLUGIN_FILE}" 2>/dev/null >/dev/null; echo $?; set -e)" == "0" ]]; then
-			elif [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
+			if [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
 				unzip -u -d "${GAME}" "/tmp/${PLUGIN_FILE}"
 			elif [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep "^${GAME}/$" | wc -l)" == "1" ]]; then
 				unzip -u "/tmp/${PLUGIN_FILE}"
