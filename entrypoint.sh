@@ -53,31 +53,29 @@ if [[ "${APP_4020}" != "false" ]]; then
 fi
 
 if [[ -n "${METAMOD}" ]]; then
-	METAMOD_URL=$(set +e; jq -M -e -r '.["mmsource-" + env.METAMOD + "-linux"]' /opt/misc/alliedmods.json; set -e)
-	if [[ "${METAMOD}" == "null" ]]; then
-		echo "Can't found MetaMod version"
+	METAMOD_URL=$(jq -M -e -r '.["mmsource-" + env.METAMOD + "-linux"] // ""' /opt/misc/alliedmods.json)
+	if [[ -n "${METAMOD_URL}" ]]; then
+		echo "Error: Can't found MetaMod version."
 		METAMOD=
-		METAMOD_URL=
 	else
 		echo "Found MetaMod ${METAMOD} (${METAMOD_URL})"
 		METAMOD_FILE=$(echo "${METAMOD_URL}" | rev | cut -d'/' -f1 | rev)
 		curl -s "${METAMOD_URL}" -o "/tmp/${METAMOD_FILE}"
-		tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${METAMOD_FILE}"
+		tar --no-same-owner -C "${GAME}" -xf "/tmp/${METAMOD_FILE}"
 		rm "/tmp/${METAMOD_FILE}"
 	fi
 fi
 
 if [[ -n "${METAMOD}" && -n "${SOURCEMOD}" ]]; then
-	SOURCEMOD_URL=$(set +e; jq -M -e -r '.["sourcemod-" + env.SOURCEMOD + "-linux"]' /opt/misc/alliedmods.json; set -e)
-	if [[ "${SOURCEMOD}" == "null" ]]; then
-		echo "Can't found SourceMod version"
+	SOURCEMOD_URL=$(jq -M -e -r '.["sourcemod-" + env.SOURCEMOD + "-linux"] // ""' /opt/misc/alliedmods.json)
+	if [[ -n "${SOURCEMOD_URL}" ]]; then
+		echo "Error: Can't found SourceMod version."
 		SOURCEMOD=
-		SOURCEMOD_URL=
 	else
 		echo "Found SourceMod ${SOURCEMOD} (${SOURCEMOD_URL})"
 		SOURCEMOD_FILE=$(echo "${SOURCEMOD_URL}" | rev | cut -d'/' -f1 | rev)
 		curl -s "${SOURCEMOD_URL}" -o "/tmp/${SOURCEMOD_FILE}"
-		tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${SOURCEMOD_FILE}"
+		tar --no-same-owner -C "${GAME}" -xf "/tmp/${SOURCEMOD_FILE}"
 		rm "/tmp/${SOURCEMOD_FILE}"
 	fi
 else
@@ -85,16 +83,15 @@ else
 fi
 
 if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" ]]; then
-	STEAMWORKS_URL=$(set +e; jq -M -e -r '.["SteamWorks-" + env.STEAMWORKS + "-linux"]' /opt/misc/alliedmods.json; set -e)
-	if [[ "${STEAMWORKS}" == "null" ]]; then
-		echo "Can't found SteamWorks version"
+	STEAMWORKS_URL=$(jq -M -e -r '.["SteamWorks-" + env.STEAMWORKS + "-linux"] // ""' /opt/misc/alliedmods.json)
+	if [[ -n "${STEAMWORKS_URL}" ]]; then
+		echo "Error: Can't found SteamWorks version."
 		STEAMWORKS=
-		STEAMWORKS_URL=
 	else
 		echo "Found SteamWorks ${STEAMWORKS} (${STEAMWORKS_URL})"
 		STEAMWORKS_FILE=$(echo "${STEAMWORKS_URL}" | rev | cut -d'/' -f1 | rev)
 		curl -s "${STEAMWORKS_URL}" -o "/tmp/${STEAMWORKS_FILE}"
-		tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${STEAMWORKS_FILE}"
+		tar --no-same-owner -C "${GAME}" -xf "/tmp/${STEAMWORKS_FILE}"
 		rm "/tmp/${STEAMWORKS_FILE}"
 	fi
 else
@@ -119,9 +116,9 @@ if [[ -n "${SOURCEMOD}" ]]; then
 			cp -a "/tmp/${PLUGIN_FILE}" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
 		elif [[ "$(set +e; tar -tzf "/tmp/${PLUGIN_FILE}" 2>/dev/null >/dev/null; echo $?; set -e)" == "0" ]]; then
 			if [[ "$(tar -tzf "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
-				tar --no-same-owner --keep-newer-files -C "${GAME}" -xf "/tmp/${PLUGIN_FILE}"
+				tar --no-same-owner -C "${GAME}" -xf "/tmp/${PLUGIN_FILE}"
 			elif [[ "$(tar -tzf "/tmp/${PLUGIN_FILE}" | grep "^${GAME}/$" | wc -l)" == "1" ]]; then
-				tar --no-same-owner --keep-newer-files -xf "/tmp/${PLUGIN_FILE}"
+				tar --no-same-owner -xf "/tmp/${PLUGIN_FILE}"
 			else
 				rm "/tmp/${PLUGIN_FILE}"
 				echo "Error: Unknown archiv structure."
@@ -129,9 +126,9 @@ if [[ -n "${SOURCEMOD}" ]]; then
 			fi
 		elif [[ "$(set +e; unzip -Z1 "/tmp/${PLUGIN_FILE}" 2>/dev/null >/dev/null; echo $?; set -e)" == "0" ]]; then
 			if [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
-				unzip -u -o -d "${GAME}" "/tmp/${PLUGIN_FILE}"
+				unzip -o -d "${GAME}" "/tmp/${PLUGIN_FILE}"
 			elif [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep "^${GAME}/$" | wc -l)" == "1" ]]; then
-				unzip -u -o "/tmp/${PLUGIN_FILE}"
+				unzip -o "/tmp/${PLUGIN_FILE}"
 			else
 				rm "/tmp/${PLUGIN_FILE}"
 				echo "Error: Unknown archiv structure."
