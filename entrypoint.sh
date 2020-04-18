@@ -112,13 +112,9 @@ if [[ -n "${SOURCEMOD}" ]]; then
 			fi
 		elif [[ "$(set +e; unzip -Z1 "/tmp/${PLUGIN_FILE}" 2>/dev/null >/dev/null; echo $?; set -e)" == "0" ]]; then
 			if [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
-				set +e
 				unzip -u -o -d "${GAME}" "/tmp/${PLUGIN_FILE}"
-				set -e
 			elif [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep "^${GAME}/$" | wc -l)" == "1" ]]; then
-				set +e
 				unzip -u -o "/tmp/${PLUGIN_FILE}"
-				set -e
 			else
 				rm "/tmp/${PLUGIN_FILE}"
 				echo "Error: Unknown archiv structure."
@@ -131,9 +127,7 @@ if [[ -n "${SOURCEMOD}" ]]; then
 		fi
 		rm "/tmp/${PLUGIN_FILE}"
 	done
-	set +e
 	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/"*".smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
-	set -e
 	cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
 	IFS=',' read -ra SOURCEMOD_PLUGINS_ENABLE <<< "${SOURCEMOD_PLUGINS_ENABLE}"
 	for a in "${SOURCEMOD_PLUGINS_ENABLE[@]}" ; do
@@ -168,6 +162,10 @@ if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" && "${AUTOUPDATE}" != "false" ]]; 
 	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
 else
 	AUTOUPDATE=false
+fi
+
+if [[ -d "/opt/overlay" ]]; then
+	cp -a "/opt/overlay/." "$(pwd)"
 fi
 
 # GLST via API
