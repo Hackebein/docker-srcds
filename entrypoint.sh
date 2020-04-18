@@ -112,9 +112,13 @@ if [[ -n "${SOURCEMOD}" ]]; then
 			fi
 		elif [[ "$(set +e; unzip -Z1 "/tmp/${PLUGIN_FILE}" 2>/dev/null >/dev/null; echo $?; set -e)" == "0" ]]; then
 			if [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
+				set +e
 				unzip -u -d "${GAME}" "/tmp/${PLUGIN_FILE}"
+				set -e
 			elif [[ "$(unzip -Z1 "/tmp/${PLUGIN_FILE}" | grep "^${GAME}/$" | wc -l)" == "1" ]]; then
+				set +e
 				unzip -u "/tmp/${PLUGIN_FILE}"
+				set -e
 			else
 				rm "/tmp/${PLUGIN_FILE}"
 				echo "Error: Unknown archiv structure."
@@ -131,7 +135,13 @@ if [[ -n "${SOURCEMOD}" ]]; then
 	cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
 	IFS=',' read -ra SOURCEMOD_PLUGINS_ENABLE <<< "${SOURCEMOD_PLUGINS_ENABLE}"
 	for a in "${SOURCEMOD_PLUGINS_ENABLE[@]}" ; do
-		mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/${a}.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
+		echo "Enable SourceMod Plugin ${a}"
+		if [[ -f "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/${a}.smx" ]]; then
+			mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/${a}.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
+		else
+			echo "Error: SourceMod Plugin ${a} not found."
+			exit 1
+		fi
 	done
 fi
 
