@@ -54,7 +54,7 @@ fi
 
 if [[ -n "${METAMOD}" ]]; then
 	METAMOD_URL=$(jq -M -e -r '.["mmsource-" + env.METAMOD + "-linux"] // ""' /opt/misc/alliedmods.json)
-	if [[ -n "${METAMOD_URL}" ]]; then
+	if [[ -z "${METAMOD_URL}" ]]; then
 		echo "Error: Can't found MetaMod version."
 		METAMOD=
 	else
@@ -68,7 +68,7 @@ fi
 
 if [[ -n "${METAMOD}" && -n "${SOURCEMOD}" ]]; then
 	SOURCEMOD_URL=$(jq -M -e -r '.["sourcemod-" + env.SOURCEMOD + "-linux"] // ""' /opt/misc/alliedmods.json)
-	if [[ -n "${SOURCEMOD_URL}" ]]; then
+	if [[ -z "${SOURCEMOD_URL}" ]]; then
 		echo "Error: Can't found SourceMod version."
 		SOURCEMOD=
 	else
@@ -84,7 +84,7 @@ fi
 
 if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" ]]; then
 	STEAMWORKS_URL=$(jq -M -e -r '.["SteamWorks-" + env.STEAMWORKS + "-linux"] // ""' /opt/misc/alliedmods.json)
-	if [[ -n "${STEAMWORKS_URL}" ]]; then
+	if [[ -z "${STEAMWORKS_URL}" ]]; then
 		echo "Error: Can't found SteamWorks version."
 		STEAMWORKS=
 	else
