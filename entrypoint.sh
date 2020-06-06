@@ -186,7 +186,7 @@ if [[ -n "${WORKSHOPDL}" && -n "${AUTHKEY}" && "${GAME}" == "garrysmod" ]]; then
 	if [[ "${WORKSHOPDL}" == "true" && -n "${WORKSHOP}" ]]; then
 		WORKSHOPDL=${WORKSHOP}
 	fi
-	ehco "-- Collection: ${WORKSHOPDL}" > "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
+	echo "-- Collection: ${WORKSHOPDL}" > "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
 	curl -q -s \
 		-d "key=${AUTHKEY}" \
 		-d "collectioncount=1" \
