@@ -42,14 +42,14 @@ if [[ "${APP_4020}" != "false" ]]; then
 		+force_install_dir "$(pwd)" \
 		+app_update ${APP_4020} -validate -language en \
 		+quit
-	find $(pwd)/* -maxdepth 0 -type d -not -name 'bin' -and -not -name 'platform' -and -not -name 'sourceengine' -and -not -name 'steamapps' -and -not -name 'garrysmod' \
+	find $(pwd)/* -maxdepth 0 -type d -not -name 'bin' -and -not -name 'platform' -and -not -name 'sourceengine' -and -not -name 'steamapps' -and -not -name 'steam_cache' -and -not -name 'garrysmod' \
 		| sed -E -n -e 's/^(.*+\/)(.*)$/    "\2" "\1\2"\r/p' \
 		| ( \
 			echo -ne '"mountcfg"\r\n{\r\n'; \
 			cat; \
 			echo -ne '}\r\n'; \
 		) > garrysmod/cfg/mount.cfg
-	find $(pwd)/* -maxdepth 0 -type d -not -name 'bin' -and -not -name 'platform' -and -not -name 'sourceengine' -and -not -name 'steamapps' -and -not -name 'garrysmod' \
+	find $(pwd)/* -maxdepth 0 -type d -not -name 'bin' -and -not -name 'platform' -and -not -name 'sourceengine' -and -not -name 'steamapps' -and -not -name 'steam_cache' -and -not -name 'garrysmod' \
 		| sed -E -n -e 's/^(.*+\/)(.*)$/    "\2" "1"\r/p' \
 		| ( \
 			echo -ne '"gamedepotsystem"\r\n{\r\n'; \
