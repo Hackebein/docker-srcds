@@ -6,6 +6,7 @@ ENV SIGNALS_ENABLE="false" \
 	SPORT="26900" \
 	# App
 	APPS="244310" \
+	GAME="" \
 	#
 	# API
 	# http://steamcommunity.com/dev/apikey
@@ -35,6 +36,9 @@ ENV SIGNALS_ENABLE="false" \
 	#
 	# Update
 	AUTOUPDATE="false" \
+	#
+	# Workshop client download (require API, only garrysmod)
+	WORKSHOPDL="" \
 	#
 	# Other
 	CUSTOMPARAMETERS="" \

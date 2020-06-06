@@ -15,6 +15,12 @@ _sig () {
 	wait "${PID}"
 }
 
+if [[ ! -t 1 ]]; then
+	echo "no TTY (-t) detected"
+	echo "Steam needs it. Exit."
+	exit 1
+fi
+
 # install APPS
 IFS=',' read -ra APPS <<< "${APPS}"
 APP_4020=false
@@ -52,6 +58,7 @@ if [[ "${APP_4020}" != "false" ]]; then
 		) > garrysmod/cfg/mountdepots.txt
 fi
 
+# Install MetaMod
 if [[ -n "${METAMOD}" ]]; then
 	METAMOD_URL=$(jq -M -e -r '.["mmsource-" + env.METAMOD + "-linux"] // ""' /opt/misc/alliedmods.json)
 	if [[ -z "${METAMOD_URL}" ]]; then
@@ -66,6 +73,7 @@ if [[ -n "${METAMOD}" ]]; then
 	fi
 fi
 
+# Install SourceMod
 if [[ -n "${METAMOD}" && -n "${SOURCEMOD}" ]]; then
 	SOURCEMOD_URL=$(jq -M -e -r '.["sourcemod-" + env.SOURCEMOD + "-linux"] // ""' /opt/misc/alliedmods.json)
 	if [[ -z "${SOURCEMOD_URL}" ]]; then
@@ -82,6 +90,7 @@ else
 	SOURCEMOD=
 fi
 
+# Install SteamWorks
 if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" ]]; then
 	STEAMWORKS_URL=$(jq -M -e -r '.["SteamWorks-" + env.STEAMWORKS + "-linux"] // ""' /opt/misc/alliedmods.json)
 	if [[ -z "${STEAMWORKS_URL}" ]]; then
@@ -98,6 +107,7 @@ else
 	STEAMWORKS=
 fi
 
+# Install SourceMod plugins
 if [[ -n "${SOURCEMOD}" ]]; then
 	IFS=',' read -ra SOURCEMOD_PLUGINS_INSTALL <<< "${SOURCEMOD_PLUGINS_INSTALL}"
 	for PLUGIN_URL in "${SOURCEMOD_PLUGINS_INSTALL[@]}"; do
@@ -143,10 +153,12 @@ if [[ -n "${SOURCEMOD}" ]]; then
 	done
 fi
 
+# Copy overlay
 if [[ -d "/opt/overlay" ]]; then
 	cp -a "/opt/overlay/." "$(pwd)"
 fi
 
+# SourceMod plugin management
 if [[ -n "${SOURCEMOD}" ]]; then
 	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/"*".smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
 	cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
@@ -162,10 +174,36 @@ if [[ -n "${SOURCEMOD}" ]]; then
 	done
 fi
 
+# Update mechanic
 if [[ -n "${SOURCEMOD}" && -n "${STEAMWORKS}" && "${AUTOUPDATE}" != "false" ]]; then
 	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
 else
 	AUTOUPDATE=false
+fi
+
+# WorkshopDL
+if [[ -n "${WORKSHOPDL}" && -n "${AUTHKEY}" && "${GAME}" == "garrysmod" ]]; then
+	if [[ "${WORKSHOPDL}" == "true" && -n "${WORKSHOP}" ]]; then
+		WORKSHOPDL=${WORKSHOP}
+	fi
+	ehco "-- Collection: ${WORKSHOPDL}" > "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
+	curl -q -s \
+		-d "key=${AUTHKEY}" \
+		-d "collectioncount=1" \
+		-d "publishedfileids[0]=${WORKSHOPDL}" \
+		"https://api.steampowered.com/ISteamRemoteStorage/GetCollectionDetails/v1/" \
+		| jq -r \
+			'.response.collectiondetails[0].children[].publishedfileid' \
+		| while IFS= read -r ID; do
+			curl -q -s \
+				-d "key=${AUTHKEY}" \
+				-d "itemcount=1" \
+				-d "publishedfileids[0]=${ID}" \
+				"https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
+				| jq -r -c \
+					'if .response.publishedfiledetails[0].result != 1 or .response.publishedfiledetails[0].banned != 0 then "-- " else "" end + "resource.AddWorkshop(\"" + .response.publishedfiledetails[0].publishedfileid + "\") -- " + .response.publishedfiledetails[0].title // ""' \
+						>> "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
+		done
 fi
 
 # GLST via API

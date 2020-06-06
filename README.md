@@ -66,9 +66,9 @@ docker run -it \
     -e "METAMOD=latest" \
     -e "SOURCEMOD=latest" \
     -e "AUTOUPDATE=true" \
-    -e "SOURCEMOD_PLUGINS_INSTALL=https://ci.splewis.net/job/csgo-pug-setup/lastSuccessfulBuild/artifact/builds/pugsetup/pugsetup-495.zip,/opt/misc/myplugin.smx" \
-    -e "SOURCEMOD_PLUGINS_ENABLE=admin-flatfile,adminhelp,adminmenu,antiflood,basebans,basechat,basecomm,basecommands,basetriggers,basevotes,clientprefs,funcommands,funvotes,myplugin,nextmap,playercommands,pugsetup,pugsetup_teamnames,reservedslots,sounds" \
-    -v ./myplugin.smx:/opt/misc/myplugin.smx \
+    -e "SOURCEMOD_PLUGINS_INSTALL=https://example.com/myplugin1.zip,/opt/misc/myplugin2.smx" \
+    -e "SOURCEMOD_PLUGINS_ENABLE=admin-flatfile,adminhelp,adminmenu,antiflood,basebans,basechat,basecomm,basecommands,basetriggers,basevotes,clientprefs,funcommands,funvotes,myplugin1,myplugin2,nextmap,playercommands,reservedslots,sounds" \
+    -v ./myplugin2.smx:/opt/misc/myplugin2.smx \
     -v ./overlay:/opt/overlay \
     hackebein/srcds
 ```
@@ -123,6 +123,9 @@ STEAMWORKS: version of SteamWorks to install (requires SourceMod)
 
 AUTOUPDATE: enables autorestart/autoupdate (requires SourceMod)
 (`Default: false`)
+
+WORKSHOPDL: downloads workshop collection for client before joining (garrysmod only)
+(`Default: `)
 
 CUSTOMPARAMETERS: additional parameters
 (`Default: `)
