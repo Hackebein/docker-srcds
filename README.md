@@ -97,11 +97,11 @@ GLSTMEMO: automatic GLST registration memo
 SIGNALS_ENABLE: enable process signal handling
 (`Default: false`)
 
-APPS: AppIDs
+APPS: AppIDs (required)
 (`Default: 244310`)
 Format: `<app_id> [-beta <betaname>] [-betapassword <password>][,...]`
 
-GAME: game to start
+GAME: game to start (required)
 (`Default: `)
 
 METAMOD: version of MetaMod to install
