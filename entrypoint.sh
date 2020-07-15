@@ -25,7 +25,7 @@ fi
 IFS=',' read -ra APPS <<< "${APPS}"
 APP_4020=false
 for a in "${APPS[@]}" ; do
-	if [[ "${GAME}" == "garrysmod"  && "${a}" =~ ^4020(\s.*)?$ ]]; then
+	if [[ "${GAME}" == "garrysmod"  && "${a}" =~ ^4020([[:space:]].*)?$ ]]; then
 		APP_4020=${a}
 	else
 		steamcmd \
