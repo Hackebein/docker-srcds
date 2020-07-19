@@ -44,6 +44,7 @@ ENV SIGNALS_ENABLE="false" \
 	CUSTOMPARAMETERS="" \
 	#
 	# Start parameters
+	SRCDSBIN="srcds_run" \
 	SRCDSPARAMS="\
 		\${CUSTOMPARAMETERS} \
 	"

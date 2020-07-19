@@ -28,7 +28,7 @@ for a in "${APPS[@]}" ; do
 	if [[ "${GAME}" == "garrysmod"  && "${a}" =~ ^4020([[:space:]].*)?$ ]]; then
 		APP_4020=${a}
 	else
-		steamcmd \
+		/opt/steamcmd/steamcmd \
 			+login ${LOGIN} \
 			+force_install_dir "$(pwd)" \
 			+app_update ${a} -validate -language en \
@@ -37,7 +37,7 @@ for a in "${APPS[@]}" ; do
 done
 # Workaround APPID 4020 (garrysmod)
 if [[ "${APP_4020}" != "false" ]]; then
-	steamcmd \
+	/opt/steamcmd/steamcmd \
 		+login ${LOGIN} \
 		+force_install_dir "$(pwd)" \
 		+app_update ${APP_4020} -validate -language en \
@@ -235,7 +235,7 @@ if [[ "${SIGNALS_ENABLE}" == "true" ]]; then
 		echo "Register ${SIG} event"
 		eval "trap '_sig ${SIG}' ${SIG_SHORT}"
 	done
-	./srcds_run \
+	"$(pwd)/${SRCDSBIN}" \
 		-strictportbind \
 		-port "${PORT}" \
 		-tv_port "${TVPORT}" \
@@ -249,7 +249,7 @@ if [[ "${SIGNALS_ENABLE}" == "true" ]]; then
 
 	wait "${PID}"
 else
-	./srcds_run \
+	"$(pwd)/${SRCDSBIN}" \
 		-strictportbind \
 		-port "${PORT}" \
 		-tv_port "${TVPORT}" \
