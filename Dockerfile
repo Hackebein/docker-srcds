@@ -59,7 +59,9 @@ RUN apt update \
  && apt clean \
  && rm -rf \
         /var/lib/apt/lists/* \
- && chmod +x /entrypoint.sh
+ && chmod +x /entrypoint.sh \
+ && mkdir -p /opt/steam \
+ && chmod a=u /opt/steam
 EXPOSE 27015/tcp 27015/udp 27020/udp
 WORKDIR /opt/steam
 VOLUME /opt/steam
