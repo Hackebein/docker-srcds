@@ -116,14 +116,14 @@ if [[ -n "${SOURCEMOD}" ]]; then
 		if [[ "${PLUGIN_URL}" =~ ^https?:\/\/ ]]; then
 			curl -s "${PLUGIN_URL}" -o "/tmp/${PLUGIN_FILE}"
 		elif [[ -f "${PLUGIN_URL}" ]]; then
-			cp -a "${PLUGIN_URL}" "/tmp"
+			cp -d "${PLUGIN_URL}" "/tmp"
 		else
 			echo "Error: Unknown file source."
 			exit 1
 		fi
 		# TODO: detect single file
 		if [[ "${PLUGIN_FILE}" =~ \.smx$ ]]; then
-			cp -a "/tmp/${PLUGIN_FILE}" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
+			cp -d "/tmp/${PLUGIN_FILE}" "$(pwd)/${GAME}/addons/sourcemod/plugins/"
 		elif [[ "$(set +e; tar -tzf "/tmp/${PLUGIN_FILE}" 2>/dev/null >/dev/null; echo $?; set -e)" == "0" ]]; then
 			if [[ "$(tar -tzf "/tmp/${PLUGIN_FILE}" | grep '^addons/$' | wc -l)" == "1" ]]; then
 				tar --no-same-owner -C "${GAME}" -xf "/tmp/${PLUGIN_FILE}"
@@ -155,13 +155,13 @@ fi
 
 # Copy overlay
 if [[ -d "/opt/overlay" ]]; then
-	cp -a "/opt/overlay/." "$(pwd)"
+	cp -dR "/opt/overlay" "$(pwd)"
 fi
 
 # SourceMod plugin management
 if [[ -n "${SOURCEMOD}" ]]; then
 	mv "$(pwd)/${GAME}/addons/sourcemod/plugins/"*".smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
-	cp -a "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
+	cp -d "/opt/misc/UpdateCheck.smx" "$(pwd)/${GAME}/addons/sourcemod/plugins/disabled/"
 	IFS=',' read -ra SOURCEMOD_PLUGINS_ENABLE <<< "${SOURCEMOD_PLUGINS_ENABLE}"
 	for a in "${SOURCEMOD_PLUGINS_ENABLE[@]}" ; do
 		echo "Enable SourceMod Plugin ${a}"
