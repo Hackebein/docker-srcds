@@ -20,6 +20,7 @@ if [[ ! -t 1 ]]; then
 	echo "Steam needs it. Exit."
 	exit 1
 fi
+export HOME=$(pwd)
 
 # install APPS
 IFS=',' read -ra APPS <<< "${APPS}"
