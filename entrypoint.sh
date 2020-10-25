@@ -156,7 +156,8 @@ fi
 
 # Copy overlay
 if [[ -d "/opt/overlay" ]]; then
-	cp -dR "/opt/overlay" "$(pwd)"
+	echo "Copy overlay"
+	cp -dRv "/opt/overlay/"* "$(pwd)"
 fi
 
 # SourceMod plugin management
