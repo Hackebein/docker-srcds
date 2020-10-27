@@ -155,7 +155,7 @@ if [[ -n "${SOURCEMOD}" ]]; then
 fi
 
 # Copy overlay
-if [[ -d "/opt/overlay" ]]; then
+if [[ -d "/opt/overlay" && "$(ls -A "/opt/overlay")" ]]; then
 	echo "Copy overlay"
 	cp -dRv "/opt/overlay/"* "$(pwd)"
 fi
