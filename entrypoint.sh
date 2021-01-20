@@ -32,7 +32,7 @@ for a in "${APPS[@]}" ; do
 		/opt/steamcmd/steamcmd \
 			+login ${LOGIN} \
 			+force_install_dir "$(pwd)" \
-			+app_update ${a} -validate -language en \
+			+app_update ${a} \
 			+quit
 	fi
 done
@@ -41,7 +41,7 @@ if [[ "${APP_4020}" != "false" ]]; then
 	/opt/steamcmd/steamcmd \
 		+login ${LOGIN} \
 		+force_install_dir "$(pwd)" \
-		+app_update ${APP_4020} -validate -language en \
+		+app_update ${APP_4020} \
 		+quit
 	find $(pwd)/* -maxdepth 0 -type d -not -name 'bin' -and -not -name 'platform' -and -not -name 'sourceengine' -and -not -name 'steamapps' -and -not -name 'steam_cache' -and -not -name 'garrysmod' \
 		| sed -E -n -e 's/^(.*+\/)(.*)$/    "\2" "\1\2"\r/p' \

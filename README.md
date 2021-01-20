@@ -98,8 +98,8 @@ SIGNALS_ENABLE: enable process signal handling
 (`Default: false`)
 
 APPS: AppIDs (required)
-(`Default: 244310`)
-Format: `<app_id> [-beta <betaname>[ -betapassword <password>]][,...]`
+(`Default: 244310 -validate -language en`)
+Format: `<app_id> [-validate] [-language en] [-beta <betaname>[ -betapassword <password>]][,...]`
 
 GAME: game to start (required)
 (`Default: `)

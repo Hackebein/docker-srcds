@@ -5,7 +5,7 @@ ENV SIGNALS_ENABLE="false" \
 	CLIENTPORT="27005" \
 	SPORT="26900" \
 	# App
-	APPS="244310" \
+	APPS="244310 -validate -language en" \
 	GAME="" \
 	#
 	# API
