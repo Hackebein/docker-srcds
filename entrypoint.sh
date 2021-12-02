@@ -30,8 +30,8 @@ for a in "${APPS[@]}" ; do
 		APP_4020=${a}
 	else
 		/opt/steamcmd/steamcmd \
-			+login ${LOGIN} \
 			+force_install_dir "$(pwd)" \
+			+login ${LOGIN} \
 			+app_update ${a} \
 			+quit
 	fi
@@ -39,8 +39,8 @@ done
 # Workaround APPID 4020 (garrysmod)
 if [[ "${APP_4020}" != "false" ]]; then
 	/opt/steamcmd/steamcmd \
-		+login ${LOGIN} \
 		+force_install_dir "$(pwd)" \
+		+login ${LOGIN} \
 		+app_update ${APP_4020} \
 		+quit
 	find $(pwd)/* -maxdepth 0 -type d -not -name 'bin' -and -not -name 'platform' -and -not -name 'sourceengine' -and -not -name 'steamapps' -and -not -name 'steam_cache' -and -not -name 'garrysmod' \
