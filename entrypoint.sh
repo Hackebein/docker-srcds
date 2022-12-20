@@ -1,6 +1,29 @@
 #!/bin/bash
 set -eu
 
+_err() {
+	errorcode=$?
+	echo -ne "\nError occurred (return code $errorcode):\n"
+	awk 'NR>L-4 && NR<L+4 { printf "\033[32m% 5d  \033[31m%3s  %s%s\033[0m\n",NR,(NR==L?">>>":""),$0~/^#/?"\033[90m":"\033[37m", $0 }' L=$1 $0
+	echo -ne "\n"
+}
+trap '_err $LINENO' ERR
+
+if [[ "$(ps -o comm= -p ${PPID} 2>/dev/null)" != "sudo" && "$(id -u)" == "0" ]]; then
+	if [[ "${UID}" == "0" ]]; then
+		USER=root
+	else
+		if [[ "$(set +e; id -u "steam" 2>/dev/null >/dev/null; echo -n $?; set -e)" != "0" ]]; then
+			echo "Creating user with UID '${UID}'"
+			useradd "steam" -u "${UID}" -g "nogroup" -s "$(which bash)" -d "$(pwd) -D"
+		fi
+		USER=steam
+	fi
+	echo "change user to ${USER} ($UID)"
+	exec su "${USER}" -s "$(which bash)" -p "$0"
+	exit 0
+fi
+
 _sig () {
 	export SIG=$1
 	SIG_SHORT=$(echo ${SIG} | sed -e 's/^SIG//g')
@@ -15,11 +38,6 @@ _sig () {
 	wait "${PID}"
 }
 
-if [[ ! -t 1 ]]; then
-	echo "no TTY (-t) detected"
-	echo "Steam needs it. Exit."
-	exit 1
-fi
 export HOME=$(pwd)
 
 # install APPS

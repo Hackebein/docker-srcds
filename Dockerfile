@@ -1,5 +1,7 @@
 FROM hackebein/steamcmd
 ENV SIGNALS_ENABLE="false" \
+	UID="0" \
+	# Port configuration
 	PORT="27015" \
 	TVPORT="27020" \
 	CLIENTPORT="27005" \

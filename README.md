@@ -75,6 +75,10 @@ docker run -it \
 
 ## Additional Environment
 
+UID: run at User ID
+(`Default: 0`)
+Format: `<uid>`
+
 LOGIN: Login information
 (`Default: anonymous`)
 Format: `<username> <password>`
