@@ -18,10 +18,10 @@ if [[ "$(ps -o comm= -p ${PPID} 2>/dev/null)" != "sudo" && "$(id -u)" == "0" ]];
 			useradd "steam" -u "${UID}" -g "nogroup" -s "$(which bash)" -d "$(pwd) -D"
 		fi
 		USER=steam
+		echo "change user to ${USER} ($UID)"
+		exec su "${USER}" -s "$(which bash)" -p "$0"
+		exit 0
 	fi
-	echo "change user to ${USER} ($UID)"
-	exec su "${USER}" -s "$(which bash)" -p "$0"
-	exit 0
 fi
 
 _sig () {
