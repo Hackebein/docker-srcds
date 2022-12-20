@@ -1,4 +1,4 @@
-FROM hackebein/steamcmd
+FROM hackebein/steamcmd:20.04
 ENV SIGNALS_ENABLE="false" \
 	UID="0" \
 	# Port configuration
