@@ -47,7 +47,7 @@ createWorkshopDownloadInstructions () {
 		fi
 	done
 	workshopCollections+=(${CID})
-	echo "-- Collection: ${CID}" > "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
+	echo "-- Collection: ${CID}" >> "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
 	curl -q -s \
 		-d "key=${AUTHKEY}" \
 		-d "collectioncount=1" \
