@@ -245,6 +245,7 @@ if [[ -n "${WORKSHOPDL}" && -n "${AUTHKEY}" && "${GAME}" == "garrysmod" ]]; then
 	if [[ "${WORKSHOPDL}" == "true" && -n "${WORKSHOP}" ]]; then
 		WORKSHOPDL=${WORKSHOP}
 	fi
+	rm -f "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
 	createWorkshopDownloadInstructions "${WORKSHOPDL}"
 fi
 
