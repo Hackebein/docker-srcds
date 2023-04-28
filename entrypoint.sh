@@ -38,6 +38,45 @@ _sig () {
 	wait "${PID}"
 }
 
+declare -a workshopCollections
+createWorkshopDownloadInstructions () {
+	export CID=$1
+	for item in ${workshopCollections[@]}; do
+		if [ "${item}" == "${CID}" ]; then
+			return
+		fi
+	done
+	workshopCollections+=(${CID})
+	echo "-- Collection: ${CID}" > "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
+	curl -q -s \
+		-d "key=${AUTHKEY}" \
+		-d "collectioncount=1" \
+		-d "publishedfileids[0]=${CID}" \
+		"https://api.steampowered.com/ISteamRemoteStorage/GetCollectionDetails/v1/" \
+		| jq -r \
+			'.response.collectiondetails[0].children[] | select(.filetype==0).publishedfileid' \
+		| while IFS= read -r ID; do
+			curl -q -s \
+				-d "key=${AUTHKEY}" \
+				-d "itemcount=1" \
+				-d "publishedfileids[0]=${ID}" \
+				"https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
+				| jq -r -c \
+					'if .response.publishedfiledetails[0].result != 1 or .response.publishedfiledetails[0].banned != 0 then "-- " else "" end + "resource.AddWorkshop(\"" + .response.publishedfiledetails[0].publishedfileid + "\") -- " + .response.publishedfiledetails[0].title // ""' \
+						>> "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
+		done
+	curl -q -s \
+		-d "key=${AUTHKEY}" \
+		-d "collectioncount=1" \
+		-d "publishedfileids[0]=${CID}" \
+		"https://api.steampowered.com/ISteamRemoteStorage/GetCollectionDetails/v1/" \
+		| jq -r \
+			'.response.collectiondetails[0].children[] | select(.filetype==2).publishedfileid' \
+		| while IFS= read -r ID; do
+			createWorkshopDownloadInstructions "${ID}"
+		done
+}
+
 export HOME=$(pwd)
 
 # install APPS
@@ -206,24 +245,7 @@ if [[ -n "${WORKSHOPDL}" && -n "${AUTHKEY}" && "${GAME}" == "garrysmod" ]]; then
 	if [[ "${WORKSHOPDL}" == "true" && -n "${WORKSHOP}" ]]; then
 		WORKSHOPDL=${WORKSHOP}
 	fi
-	echo "-- Collection: ${WORKSHOPDL}" > "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
-	curl -q -s \
-		-d "key=${AUTHKEY}" \
-		-d "collectioncount=1" \
-		-d "publishedfileids[0]=${WORKSHOPDL}" \
-		"https://api.steampowered.com/ISteamRemoteStorage/GetCollectionDetails/v1/" \
-		| jq -r \
-			'.response.collectiondetails[0].children[].publishedfileid' \
-		| while IFS= read -r ID; do
-			curl -q -s \
-				-d "key=${AUTHKEY}" \
-				-d "itemcount=1" \
-				-d "publishedfileids[0]=${ID}" \
-				"https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/" \
-				| jq -r -c \
-					'if .response.publishedfiledetails[0].result != 1 or .response.publishedfiledetails[0].banned != 0 then "-- " else "" end + "resource.AddWorkshop(\"" + .response.publishedfiledetails[0].publishedfileid + "\") -- " + .response.publishedfiledetails[0].title // ""' \
-						>> "$(pwd)/${GAME}/lua/autorun/server/WorkshopDL.lua"
-		done
+	createWorkshopDownloadInstructions "${WORKSHOPDL}"
 fi
 
 # GLST via API
