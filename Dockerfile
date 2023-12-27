@@ -57,6 +57,7 @@ RUN apt update \
         curl \
         jq \
         lib32stdc++6 \
+		libtinfo5:i386 \
         unzip \
  && apt clean \
  && rm -rf \
